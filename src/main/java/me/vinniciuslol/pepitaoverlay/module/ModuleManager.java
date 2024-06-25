@@ -1,6 +1,7 @@
 package me.vinniciuslol.pepitaoverlay.module;
 
 import me.vinniciuslol.pepitaoverlay.module.enums.ModuleCategory;
+import me.vinniciuslol.pepitaoverlay.module.impl.render.BwOverlay;
 import me.vinniciuslol.pepitaoverlay.module.impl.render.ClickGUI;
 import me.vinniciuslol.pepitaoverlay.setting.Setting;
 import net.minecraft.client.Minecraft;
@@ -24,7 +25,8 @@ public class ModuleManager {
 
     public void loadModules() {
         addModules(
-                new ClickGUI()
+                new ClickGUI(),
+                new BwOverlay()
         );
     }
 
