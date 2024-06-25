@@ -6,10 +6,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = "pepitaoverlay")
 public class PepitaOverlay {
-    public static ModuleManager MODULE_MANAGER = new ModuleManager();
+    public static ModuleManager MODULE_MANAGER;
 
     @Mod.EventHandler
     public static void onPreInit(FMLPreInitializationEvent e) {
+        MODULE_MANAGER = new ModuleManager();
         MODULE_MANAGER.loadModules();
     }
 }
