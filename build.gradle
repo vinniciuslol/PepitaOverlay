@@ -94,7 +94,7 @@ jar {
 
 sourceSets {
     main {
-        ext.refMap = "mixins.examplemod.refmap.json"
+        ext.refMap = "mixins.pepita.refmap.json"
     }
 }
 
