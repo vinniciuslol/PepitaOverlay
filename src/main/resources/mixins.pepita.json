@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "me.vinniciuslol.pepitaoverlay.mixin.impl",
+  "refmap": "mixins.pepita.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
