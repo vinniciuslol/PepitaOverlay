@@ -1,4 +1,4 @@
-package me.vinniciuslol.pepitaoverlay.module.impl.render;
+package me.vinniciuslol.pepitaoverlay.module.impl.overlays;
 
 import com.google.gson.JsonObject;
 import me.vinniciuslol.pepitaoverlay.PepitaOverlay;
