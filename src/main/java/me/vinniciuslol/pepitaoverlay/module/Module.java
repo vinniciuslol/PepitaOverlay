@@ -74,9 +74,6 @@ public class Module {
             this.disable();
     }
 
-    public void guiUpdate() {
-    }
-
     public void onEnable() {}
 
     public void onDisable() {}

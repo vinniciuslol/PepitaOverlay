@@ -9,6 +9,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import jdk.nashorn.internal.parser.JSONParser;
+import scala.util.parsing.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,18 +20,19 @@ import java.net.URL;
 
 public class UrlUtils {
 
-    public static String getTextFromURL2(String _url) {
+    public static String getTextFromURL(String _url) {
         String r = "";
-        HttpURLConnection con = null;
+        HttpURLConnection conn = null;
 
         try {
             URL url = new URL(_url);
-            con = (HttpURLConnection) url.openConnection();
-            r = getTextFromConnection(con);
-        } catch (IOException ignored) {
+            conn = (HttpURLConnection) url.openConnection();
+            r = getTextFromConnection(conn);
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
-            if (con != null) {
-                con.disconnect();
+            if (conn != null) {
+                conn.disconnect();
             }
 
         }
@@ -36,7 +40,7 @@ public class UrlUtils {
         return r;
     }
 
-    public static String getTextFromURL(String _url) {
+    public static String getTextFromURLapache(String _url) {
         String responseBody = "";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();

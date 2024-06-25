@@ -2,6 +2,7 @@ package me.vinniciuslol.pepitaoverlay.module;
 
 import me.vinniciuslol.pepitaoverlay.module.enums.ModuleCategory;
 import me.vinniciuslol.pepitaoverlay.module.impl.overlays.BwOverlay;
+import me.vinniciuslol.pepitaoverlay.module.impl.overlays.SwOverlay;
 import me.vinniciuslol.pepitaoverlay.module.impl.render.ClickGUI;
 import me.vinniciuslol.pepitaoverlay.setting.Setting;
 
@@ -15,7 +16,8 @@ public class ModuleManager {
     public void loadModules() {
         addModules(
                 new ClickGUI(),
-                new BwOverlay()
+                new BwOverlay(),
+                new SwOverlay()
         );
     }
 

@@ -82,7 +82,7 @@ public class BwOverlay extends Module {
 
         if (drawError(sr, fr)) {
             linesDrawn++;
-            // return;
+            //return;
         }
 
         for(NetworkPlayerInfo player : Utils.getPlayers()){
@@ -104,13 +104,13 @@ public class BwOverlay extends Module {
         String UUID = player.getGameProfile().getId().toString();
 
         double fkdr = 0.00;
-        if(!playerStats.containsKey(UUID)){
-            PepitaOverlay.getExecutor().execute(() -> getStats(UUID));
-            playerStats.put(UUID, new int[] {-16});
+        if(!playerStats.containsKey(name)){
+            PepitaOverlay.getExecutor().execute(() -> getStats(name));
+            playerStats.put(name, new int[] {-16});
             return;
         }
 
-        int[] stats = playerStats.get(UUID);
+        int[] stats = playerStats.get(name);
 
         if(stats.length == 1 && stats[0] == -16){
             //we are loading player stats so return
@@ -156,8 +156,6 @@ public class BwOverlay extends Module {
 
         textY += marginTextY.getValue() + fr.FONT_HEIGHT;
         linesDrawn++;
-
-
     }
 
     public static int getLevelColour(int stat){
@@ -228,18 +226,15 @@ public class BwOverlay extends Module {
     private void getStats(String uuid) {
         final int[] stats = new int[9];
 
-        String con;
-        if (apacheRequest.isEnabled()) {
-            con = UrlUtils.getTextFromURL("https://mush.com.br/api/player/" + uuid);
-        } else {
-            con = UrlUtils.getTextFromURL2("https://mush.com.br/api/player/" + uuid);
-        }
+        String con = UrlUtils.getTextFromURL("https://mush.com.br/api/player/" + uuid);
 
         if (con.isEmpty()) {
+            System.out.println("Conexão vazia");
             return;
         }
 
         if (con.equals("{\"success\":true,\"player\":null}")) {
+            System.out.println("Player nulo");
             stats[0] = -1;
             playerStats.put(uuid, stats);
         }
