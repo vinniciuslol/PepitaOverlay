@@ -6,4 +6,5 @@ much love from bostil(Brazil)
 ## Credits
 [Fyoki](https://github.com/dis6bled): Api and Overlay<br>
 [vinniciuslol(me)](https://github.com/vinniciuslol): Base and Utils<br>
-[manuthebyte](https://github.com/manuthebyte): Forge 1.8.9 mixin template
+[manuthebyte](https://github.com/manuthebyte): Forge 1.8.9 mixin template<br><br>
+special thanks to suqqo for this icon, lol
