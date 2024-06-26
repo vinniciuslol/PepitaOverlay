@@ -107,7 +107,7 @@ public class BwOverlay extends Module {
 
         double fkdr = 0.00;
         if(!playerStats.containsKey(name)){
-            PepitaOverlay.getExecutor().execute(() -> getStats(name, UUID));
+            PepitaOverlay.EXECUTOR.execute(() -> getStats(name, UUID));
             playerStats.put(name, new int[] {-16});
             return;
         }
