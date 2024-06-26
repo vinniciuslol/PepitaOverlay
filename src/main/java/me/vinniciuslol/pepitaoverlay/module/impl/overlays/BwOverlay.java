@@ -15,12 +15,15 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static me.vinniciuslol.pepitaoverlay.utils.Utils.getValue;
 
@@ -28,24 +31,24 @@ import static me.vinniciuslol.pepitaoverlay.utils.Utils.getValue;
 public class BwOverlay extends Module {
 
     public static SliderSetting overlayX, overlayY, margin, marginTextY, marginTextX, alpha;
-    public static BooleanSetting Rounded, dropShadowT, apacheRequest;
+    public static BooleanSetting Rounded, dropShadowT;
     public static boolean active;
     public static double overlayWidth, overlayHeight, textY;
     public static int mainTextColour, linesDrawn, backgroundColour, errorColour;
     public static int bgColor;
     public static HashMap<String, int[]> playerStats = new HashMap<>();
     public static HashMap<StatType, Integer> statStart = new HashMap<>();
+    public static List<String> fakedNicks = new ArrayList<>();
     private int rgb_c = 0;
+    private String message;
 
     public BwOverlay()
     {
         overlayHeight = 170;
         overlayWidth = 300;
 
-        //this.registerSetting(apacheRequest = new BooleanSetting("Apache", false));
         this.registerSetting(Rounded = new BooleanSetting("Rounded", false));
         this.registerSetting(dropShadowT = new BooleanSetting("Drop Shadow", false));
-        //this.registerSetting(colorByName = new ButtonSetting("Color by Name", false));
         this.registerSetting(alpha = new SliderSetting("Opacity", 65, 0, 100, 1));
         this.registerSetting(overlayX = new SliderSetting("X", 7, 0, 250, 1));
         this.registerSetting(overlayY = new SliderSetting("Y", 7, 0, 250, 1));
@@ -82,7 +85,6 @@ public class BwOverlay extends Module {
 
         if (drawError(sr, fr)) {
             linesDrawn++;
-            //return;
         }
 
         for(NetworkPlayerInfo player : Utils.getPlayers()){
@@ -96,7 +98,7 @@ public class BwOverlay extends Module {
 
     public void guiUpdate() {
         int alpha100 = (int) alpha.getValue();
-        this.rgb_c = (new Color((int) 1, (int) 1, (int) 1, (int) (alpha100 * 255/100))).getRGB();
+        this.rgb_c = (new Color(1, 1, 1, (alpha100 * 255/100))).getRGB();
     }
 
     public void drawStats(NetworkPlayerInfo player, FontRenderer fr) {
@@ -105,7 +107,7 @@ public class BwOverlay extends Module {
 
         double fkdr = 0.00;
         if(!playerStats.containsKey(name)){
-            PepitaOverlay.getExecutor().execute(() -> getStats(name));
+            PepitaOverlay.getExecutor().execute(() -> getStats(name, UUID));
             playerStats.put(name, new int[] {-16});
             return;
         }
@@ -113,28 +115,8 @@ public class BwOverlay extends Module {
         int[] stats = playerStats.get(name);
 
         if(stats.length == 1 && stats[0] == -16){
-            //we are loading player stats so return
             return;
         }
-
-        //int rgb = rainbow.isToggled() ? Utils.getChroma(2L, 0L) : this.rgb_d;
-
-        //int colorrr;
-        //int colorrr1;
-
-        //final int rgb = getColorFromTags(player.getDisplayName().getFormattedText());
-
-        final int colorrr = new Color(240, 240, 240).getRGB();
-
-            /*if (colorByName.isToggled()) {
-                colorrr1 = getColorFromTags(player.getDisplayName().getFormattedText());
-            } else {
-                colorrr1 = new Color(240, 240, 240).getRGB();
-            }
-
-            colorrr = colorrr1;*/
-
-        //final int colorByName = getColorFromTags(name);
 
         if (stats[4] != 0) {
             fkdr = Utils.rnd(stats[3] / stats[4], 2);
@@ -144,18 +126,25 @@ public class BwOverlay extends Module {
 
         if (!dropShadowT.isEnabled()) {
             fr.drawString(stats[0] + "", statStart.get(StatType.LEVEL), (int)textY, getLevelColour(stats[0]), false);
-            fr.drawString(name, statStart.get(StatType.PLAYER_NAME), (int)textY, colorrr, false);
+            fr.drawString(name, statStart.get(StatType.PLAYER_NAME), (int)textY, getNameColour(name), false);
             fr.drawString(stats[2] + "", statStart.get(StatType.WS), (int)textY, getWSColour(stats[2]), false);
             fr.drawString(fkdr + "", statStart.get(StatType.FKDR), (int)textY, getFKDRColour(fkdr), false);
         } else {
             fr.drawString(stats[0] + "", statStart.get(StatType.LEVEL), (int)textY, getLevelColour(stats[0]), true);
-            fr.drawString(name, statStart.get(StatType.PLAYER_NAME), (int)textY, colorrr, true);
+            fr.drawString(name, statStart.get(StatType.PLAYER_NAME), (int)textY, getNameColour(name), true);
             fr.drawString(stats[2] + "", statStart.get(StatType.WS), (int)textY, getWSColour(stats[2]), true);
             fr.drawString(fkdr + "", statStart.get(StatType.FKDR), (int)textY, getFKDRColour(fkdr), true);
         }
 
         textY += marginTextY.getValue() + fr.FONT_HEIGHT;
         linesDrawn++;
+    }
+    
+    public static int getNameColour(String name) {
+        if (fakedNicks.contains(name))
+            return Colours.RED;
+        
+        return new Color(240, 240, 240).getRGB();
     }
 
     public static int getLevelColour(int stat){
@@ -222,21 +211,19 @@ public class BwOverlay extends Module {
         return Colours.PURPLE;
     }
 
-
-    private void getStats(String uuid) {
+    private void getStats(String name, String uuid) {
         final int[] stats = new int[9];
+
 
         String con = UrlUtils.getTextFromURL("https://mush.com.br/api/player/" + uuid);
 
-        if (con.isEmpty()) {
-            System.out.println("Conexão vazia");
-            return;
+        if (con.equals("{\"success\":false,\"error_code\":404,\"response\":{\"details\":{},\"message\":\"Not Found\",\"status\":404}}")) {
+            con = UrlUtils.getTextFromURL("https://mush.com.br/api/player/" + name);
         }
 
-        if (con.equals("{\"success\":true,\"player\":null}")) {
-            System.out.println("Player nulo");
-            stats[0] = -1;
-            playerStats.put(uuid, stats);
+        if (con.isEmpty()) {
+            System.out.println("Error while requesting on MushMC Api");
+            return;
         }
 
         JsonObject bw;
@@ -247,7 +234,6 @@ public class BwOverlay extends Module {
             return;
         }
         stats[0] = getValue(bw, "level");
-        //stats[1] = stats[0] < 0 ? -1 : 0;
         stats[2] = getValue(bw, "winstreak");
         stats[3] = getValue(bw, "final_kills");
         stats[4] = getValue(bw, "final_deaths");

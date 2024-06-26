@@ -29,6 +29,18 @@ public class ModuleManager {
         this.modules.addAll(Arrays.asList(mod));
     }
 
+    public Module getModule(Module mod) {
+        return modules.stream().filter(m -> m.equals(mod)).findFirst().orElse(null);
+    }
+
+    public Module getModule(Class<? extends Module> clazz) {
+        return modules.stream().filter(m -> m.getClass().equals(clazz)).findFirst().orElse(null);
+    }
+
+    public Module getModuleFromName(String name, boolean cs) {
+        return modules.stream().filter(m -> cs ? m.getName().equals(name) : m.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
+
     public List<Module> getModulesFromCategory(ModuleCategory category) {
         List<Module> mods = new ArrayList<>();
 
