@@ -31,13 +31,13 @@ public class CommandManager {
         if (e.getMessage().startsWith(".")) {
             e.setCanceled(true);
 
-            String commandName = e.getMessage().substring(1, e.getMessage().split(" ")[0].length() - 1);
-            String[] args = e.getMessage().substring(commandName.length() + 1).split(" ");
-
             if (!commands.isEmpty())
                 commands.forEach(c -> {
+                    String[] args = e.getMessage().substring(1).split(" ");
+                    String commandName = args[0];
+
                     if (commandName.equals(c.getName()))
-                        c.onExecute(args);
+                        c.onExecute(Arrays.copyOfRange(args, 1, args.length));
                 });
         }
     }
